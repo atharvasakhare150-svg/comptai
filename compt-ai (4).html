@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="theme-color" content="#0a0a12"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Compt AI"/>
+<meta name="description" content="Compt AI – Free AI Assistant by Atharv Sachin Sakhare. No login needed."/>
+<link rel="manifest" id="pwa-manifest"/>
+<title>Compt AI – Free AI Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#0a0a12; --sidebar:#0f0f1a; --surface:#161622; --surface2:#1e1e2e; --surface3:#262638;
+  --border:rgba(255,255,255,0.06); --border2:rgba(255,255,255,0.11);
+  --text:#eeeef8; --text2:#8888a8; --text3:#44445a;
+  --accent:#6d28d9; --accent2:#8b5cf6; --accent3:#a78bfa;
+  --glow:rgba(109,40,217,0.3); --green:#22c55e;
+  --code-bg:#080810; --user-bg:#170d2e; --user-border:#3b1f72;
+  --r:14px; --rs:9px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh}
+
+/* SIDEBAR */
+#sb{width:260px;min-width:260px;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:transform .25s cubic-bezier(.4,0,.2,1);z-index:200}
+.sb-top{padding:18px 14px 12px}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.brand-icon{width:40px;height:40px;border-radius:11px;overflow:hidden;flex-shrink:0;box-shadow:0 0 24px var(--glow)}
+.brand-icon img{width:100%;height:100%;object-fit:cover}
+.bname{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.btag{font-size:10px;color:var(--accent3);font-weight:500;letter-spacing:.7px;margin-top:1px}
+#nbtn{width:100%;padding:9px 12px;background:linear-gradient(135deg,rgba(109,40,217,.18),rgba(67,56,202,.12));border:1px solid rgba(109,40,217,.3);border-radius:var(--rs);color:var(--accent3);font-size:13px;font-family:'Inter',sans-serif;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .18s;font-weight:500}
+#nbtn:hover{background:linear-gradient(135deg,rgba(109,40,217,.28),rgba(67,56,202,.2));border-color:rgba(139,92,246,.5);color:#fff}
+.sblbl{padding:14px 16px 5px;font-size:9.5px;color:var(--text3);letter-spacing:1.1px;text-transform:uppercase;font-weight:600}
+#hist{flex:1;overflow-y:auto;padding:4px 8px}
+#hist::-webkit-scrollbar{width:3px}
+#hist::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px}
+.hi{padding:8px 10px;border-radius:var(--rs);font-size:12.5px;color:var(--text2);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:all .12s;margin-bottom:2px;border:1px solid transparent}
+.hi:hover{background:var(--surface);color:var(--text);border-color:var(--border)}
+.hi.active{background:var(--surface);color:var(--text);border-color:rgba(109,40,217,.25)}
+.sb-bot{padding:12px 14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:10px}
+.sb-info{background:linear-gradient(135deg,rgba(109,40,217,.1),rgba(67,56,202,.06));border:1px solid rgba(109,40,217,.18);border-radius:var(--rs);padding:11px 13px;font-size:12px;color:var(--text2);line-height:1.65}
+.ai-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(109,40,217,.25);color:var(--accent3);font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;margin-bottom:7px;border:1px solid rgba(139,92,246,.2)}
+.ai-badge .dot{width:6px;height:6px;background:var(--green);border-radius:50%}
+.founder-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 12px;display:flex;align-items:center;gap:9px}
+.founder-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6d28d9,#4338ca);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.founder-info{min-width:0}
+.founder-label{font-size:9.5px;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;font-weight:600;margin-bottom:2px}
+.founder-name{font-size:12.5px;font-weight:600;color:var(--accent3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* MAIN */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* TOPBAR */
+#topbar{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:rgba(10,10,18,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#mbtn{display:none;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;padding:4px 6px;border-radius:6px;transition:background .12s}
+#mbtn:hover{background:var(--surface)}
+.mbadge{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:5px 13px;font-size:12px;color:var(--text2);font-weight:500}
+.mbadge .dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:blink 2.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.tb-r{margin-left:auto;display:flex;gap:6px}
+.tbb{background:none;border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);padding:6px 12px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;font-weight:500}
+.tbb:hover{background:var(--surface);color:var(--text);border-color:var(--border2)}
+
+/* CHAT */
+#chat{flex:1;overflow-y:auto;padding-bottom:12px}
+#chat::-webkit-scrollbar{width:4px}
+#chat::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:4px}
+
+/* WELCOME */
+#wlc{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:68vh;padding:40px 20px;text-align:center}
+.wlogo{width:72px;height:72px;border-radius:20px;overflow:hidden;margin-bottom:22px;box-shadow:0 0 70px var(--glow),0 0 120px rgba(109,40,217,.15)}
+.wlogo img{width:100%;height:100%;object-fit:cover}
+#wlc h1{font-size:26px;font-weight:700;margin-bottom:10px;letter-spacing:-.5px}
+#wlc h1 span{background:linear-gradient(90deg,#8b5cf6,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+#wlc p{color:var(--text2);font-size:14px;max-width:400px;line-height:1.7;margin-bottom:26px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:24px}
+.chip{padding:6px 14px;border-radius:20px;background:var(--surface);border:1px solid var(--border2);font-size:12px;color:var(--text2);cursor:pointer;transition:all .15s;font-weight:500}
+.chip:hover{background:var(--surface2);color:var(--text);border-color:rgba(139,92,246,.4);transform:translateY(-1px)}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;max-width:520px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;text-align:left;cursor:pointer;transition:all .15s}
+.card:hover{background:var(--surface2);border-color:rgba(109,40,217,.35);transform:translateY(-2px);box-shadow:0 4px 24px rgba(109,40,217,.12)}
+.ci{font-size:20px;margin-bottom:8px}
+.ct{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}
+.cd{font-size:11.5px;color:var(--text3)}
+
+/* MESSAGES */
+.msg{display:flex;gap:14px;padding:18px 20px;max-width:820px;margin:0 auto;width:100%;animation:fi .2s ease}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{flex-direction:row-reverse}
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;margin-top:2px}
+.av.ai{overflow:hidden;box-shadow:0 0 14px rgba(109,40,217,.4)}
+.av.ai img{width:100%;height:100%;object-fit:cover}
+.av.u{background:var(--surface2);color:var(--text);border:1px solid var(--border2);font-size:11px}
+.mc{flex:1;min-width:0}
+.mn{font-size:11px;font-weight:600;color:var(--text3);margin-bottom:6px;letter-spacing:.3px}
+.msg.user .mn{text-align:right}
+.mt{font-size:14.5px;line-height:1.8;color:var(--text)}
+.msg.user .mt{display:inline-block;background:var(--user-bg);border:1px solid var(--user-border);border-radius:16px 16px 4px 16px;padding:11px 16px;max-width:100%}
+.mt p{margin-bottom:10px}.mt p:last-child{margin-bottom:0}
+.mt ul,.mt ol{padding-left:20px;margin-bottom:10px}
+.mt li{margin-bottom:5px;line-height:1.65}
+.mt h1,.mt h2,.mt h3{font-weight:600;margin:14px 0 6px}
+.mt h1{font-size:19px}.mt h2{font-size:17px}.mt h3{font-size:15px}
+.mt strong{font-weight:600;color:var(--text)}
+.mt em{font-style:italic;color:var(--text2)}
+.mt hr{border:none;border-top:1px solid var(--border);margin:12px 0}
+.mt code:not(pre code){background:var(--surface2);padding:2px 7px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#c4b5fd}
+.cblk{background:var(--code-bg);border:1px solid var(--border);border-radius:var(--rs);margin:10px 0;overflow:hidden}
+.chdr{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;background:var(--surface);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)}
+.cpbtn{background:none;border:1px solid var(--border);color:var(--text3);cursor:pointer;font-size:11px;font-family:'Inter',sans-serif;padding:2px 9px;border-radius:5px;transition:all .15s}
+.cpbtn:hover{background:var(--surface2);color:var(--text);border-color:var(--border2)}
+.cblk pre{padding:14px 16px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.75;color:#cdd9e5}
+.cblk pre::-webkit-scrollbar{height:3px}
+.cblk pre::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px}
+.typing{display:flex;gap:5px;align-items:center;padding:4px 0}
+.typing span{width:7px;height:7px;background:var(--accent2);border-radius:50%;animation:tp 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes tp{0%,80%,100%{transform:scale(.65);opacity:.35}40%{transform:scale(1);opacity:1}}
+
+/* INPUT */
+#iw{padding:12px 16px 18px;background:var(--bg);border-top:1px solid var(--border)}
+#ib{max-width:820px;margin:0 auto;background:var(--surface);border:1px solid var(--border2);border-radius:15px;display:flex;align-items:flex-end;gap:10px;padding:10px 12px;transition:border-color .2s,box-shadow .2s}
+#ib:focus-within{border-color:rgba(109,40,217,.55);box-shadow:0 0 0 3px rgba(109,40,217,.1)}
+#inp{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:14.5px;font-family:'Inter',sans-serif;resize:none;max-height:180px;min-height:24px;line-height:1.65;padding:3px 0}
+#inp::placeholder{color:var(--text3)}
+#sbtn{width:37px;height:37px;background:linear-gradient(135deg,#6d28d9,#4338ca);border:none;border-radius:10px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;font-size:16px;box-shadow:0 2px 12px rgba(109,40,217,.4)}
+#sbtn:hover{transform:scale(1.08);box-shadow:0 4px 20px var(--glow)}
+#sbtn:disabled{background:var(--surface2);color:var(--text3);cursor:not-allowed;transform:none;box-shadow:none}
+.hint{text-align:center;font-size:11px;color:var(--text3);margin-top:9px;max-width:820px;margin-left:auto;margin-right:auto}
+
+/* OVERLAY */
+#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:199}
+
+/* TOAST */
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(14px);background:#16a34a;color:#fff;padding:10px 20px;border-radius:var(--rs);font-size:13px;opacity:0;transition:all .3s;pointer-events:none;z-index:999;max-width:340px;text-align:center;font-weight:500}
+#toast.err{background:#dc2626}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* MOBILE */
+@media(max-width:700px){
+  #sb{position:fixed;top:0;left:0;bottom:0;transform:translateX(-100%)}
+  #sb.open{transform:translateX(0)}
+  #ov.open{display:block}
+  #mbtn{display:block}
+  .cards{grid-template-columns:1fr}
+  #wlc h1{font-size:22px}
+  .msg{padding:14px 12px}
+}
+
+/* PWA INSTALL */
+#install-banner{display:none;align-items:center;justify-content:space-between;gap:10px;background:linear-gradient(90deg,rgba(109,40,217,.15),rgba(67,56,202,.1));border:1px solid rgba(109,40,217,.25);border-radius:var(--rs);padding:9px 14px;margin:8px 16px;font-size:12.5px;color:var(--text2)}
+#install-banner.show{display:flex}
+#install-btn{background:linear-gradient(135deg,#6d28d9,#4338ca);color:#fff;border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;font-weight:600;white-space:nowrap}
+#dismiss-install{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0 4px}
+</style>
+</head>
+<body>
+
+<aside id="sb">
+  <div class="sb-top">
+    <div class="brand">
+      <div class="brand-icon">
+        <img src="https://i.ibb.co/29hm2r6/Chat-GPT-Image-Jun-28-2026-12-25-09-PM.png" alt="Compt AI" onerror="this.parentNode.innerHTML='<div style=\'width:40px;height:40px;background:linear-gradient(135deg,#6d28d9,#4338ca);border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:#fff\'>C</div>'"/>
+      </div>
+      <div>
+        <div class="bname">Compt AI</div>
+        <div class="btag">FREE &middot; NO LOGIN &middot; NO KEY</div>
+      </div>
+    </div>
+    <button id="nbtn" onclick="newChat()">&#9998;&nbsp; New Chat</button>
+  </div>
+  <div class="sblbl">Recent Chats</div>
+  <div id="hist"></div>
+  <div class="sb-bot">
+    <div class="sb-info">
+      <div class="ai-badge"><div class="dot"></div> AI Online</div><br/>
+      <strong style="color:var(--accent3)">Compt AI</strong> — Your free assistant<br/>
+      Coding, math, essays, science &amp; anything.<br/>
+      <span style="color:var(--text3);font-size:11px;">100% free &middot; No account needed</span>
+    </div>
+    <div class="founder-card">
+      <div class="founder-avatar">A</div>
+      <div class="founder-info">
+        <div class="founder-label">&#9889; Founded by</div>
+        <div class="founder-name">Atharv Sachin Sakhare</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div id="ov" onclick="closeSb()"></div>
+
+<main id="main">
+  <div id="topbar">
+    <button id="mbtn" onclick="toggleSb()">&#9776;</button>
+    <div class="mbadge"><div class="dot"></div> Compt AI &mdash; Free</div>
+    <div class="tb-r">
+      <button class="tbb" onclick="newChat()">+ New</button>
+      <button class="tbb" onclick="clearAll()">Clear</button>
+    </div>
+  </div>
+
+  <div id="chat">
+    <div id="wlc">
+      <div class="wlogo">
+        <img src="https://i.ibb.co/29hm2r6/Chat-GPT-Image-Jun-28-2026-12-25-09-PM.png" alt="Compt AI" onerror="this.style.display='none';this.parentNode.style.background='linear-gradient(135deg,#6d28d9,#4338ca)';this.parentNode.innerHTML='<span style=\'font-size:30px;font-weight:800;color:#fff\'>C</span>'"/>
+      </div>
+      <h1>Hello! I'm <span>Compt AI</span> &#128075;</h1>
+      <p>Your free AI assistant for coding, homework, science, math and everything else. Ask me anything — 24/7, no sign-up needed.</p>
+      <div class="chips">
+        <div class="chip" onclick="ask('What can you help me with?')">&#129302; What can you do?</div>
+        <div class="chip" onclick="ask('Tell me an interesting fun fact')">&#127922; Fun fact</div>
+        <div class="chip" onclick="ask('Write a short poem about the moon')">&#9997; Write a poem</div>
+        <div class="chip" onclick="ask('Explain quantum computing simply')">&#128300; Quantum computing</div>
+        <div class="chip" onclick="ask('What is artificial intelligence?')">&#128161; What is AI?</div>
+        <div class="chip" onclick="ask('Help me with my homework')">&#128218; Homework help</div>
+      </div>
+      <div class="cards">
+        <div class="card" onclick="ask('Write Hello World in Java, Python, C and C++ and explain each one clearly')">
+          <div class="ci">&#128187;</div><div class="ct">Coding Help</div><div class="cd">Java, Python, C, C++, JS &amp; more</div>
+        </div>
+        <div class="card" onclick="ask('Explain data structures: arrays, linked lists, stacks and queues with examples')">
+          <div class="ci">&#128202;</div><div class="ct">Data Structures</div><div class="cd">Arrays, trees, graphs &amp; algorithms</div>
+        </div>
+        <div class="card" onclick="ask('Help me write a 300-word essay on climate change')">
+          <div class="ci">&#9997;</div><div class="ct">Essay Writing</div><div class="cd">Any topic, any length</div>
+        </div>
+        <div class="card" onclick="ask('A train goes 120 km in 2 hours. What is its speed? Explain step by step')">
+          <div class="ci">&#128290;</div><div class="ct">Math &amp; Science</div><div class="cd">Step-by-step solutions</div>
+        </div>
+        <div class="card" onclick="ask('Explain machine learning vs deep learning with real examples')">
+          <div class="ci">&#129302;</div><div class="ct">AI &amp; Technology</div><div class="cd">ML, AI, cloud, cybersecurity</div>
+        </div>
+        <div class="card" onclick="ask('Give me a timeline of the most important events in world history')">
+          <div class="ci">&#127758;</div><div class="ct">General Knowledge</div><div class="cd">History, geography, culture</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="install-banner">
+    <span>&#128640; Install Compt AI as an app!</span>
+    <div style="display:flex;gap:6px;align-items:center">
+      <button id="install-btn">Install</button>
+      <button id="dismiss-install" onclick="dismissInstall()">&#215;</button>
+    </div>
+  </div>
+
+  <div id="iw">
+    <div id="ib">
+      <textarea id="inp" placeholder="Ask me anything — coding, math, essays, science..." rows="1"></textarea>
+      <button id="sbtn" onclick="send()" title="Send (Enter)">&#10148;</button>
+    </div>
+    <div class="hint">Compt AI &middot; Free for everyone &middot; By Atharv Sachin Sakhare &middot; Enter to send</div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script>
+// ── PWA Manifest ───────────────────────────────────────────────────────────
+(function(){
+  var m={name:"Compt AI",short_name:"Compt AI",description:"Free AI Assistant by Atharv Sachin Sakhare.",start_url:"./",display:"standalone",background_color:"#0a0a12",theme_color:"#0a0a12",icons:[{src:"https://i.ibb.co/29hm2r6/Chat-GPT-Image-Jun-28-2026-12-25-09-PM.png",sizes:"512x512",type:"image/png"}]};
+  var b=new Blob([JSON.stringify(m)],{type:'application/json'});
+  document.getElementById('pwa-manifest').href=URL.createObjectURL(b);
+})();
+
+// ── Service Worker ─────────────────────────────────────────────────────────
+if('serviceWorker' in navigator){
+  var sw=`const C='compt-v2';self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||e.request.url.includes('groq.com')||e.request.url.includes('ibb.co')||e.request.url.includes('fonts.g'))return;e.respondWith(caches.open(C).then(c=>c.match(e.request).then(r=>r||fetch(e.request).then(res=>{c.put(e.request,res.clone());return res;}))))});`;
+  navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'})),{scope:'./'}).catch(function(){});
+}
+
+// ── PWA Install ────────────────────────────────────────────────────────────
+var deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault(); deferredPrompt=e;
+  if(!localStorage.getItem('pwa_dismissed')) document.getElementById('install-banner').classList.add('show');
+});
+document.getElementById('install-btn').addEventListener('click',function(){
+  if(!deferredPrompt)return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function(){deferredPrompt=null;document.getElementById('install-banner').classList.remove('show');});
+});
+function dismissInstall(){document.getElementById('install-banner').classList.remove('show');localStorage.setItem('pwa_dismissed','1');}
+window.addEventListener('appinstalled',function(){document.getElementById('install-banner').classList.remove('show');showToast('Compt AI installed!');});
+
+// ── API Key (obfuscated — split + base64) ─────────────────────────────────
+function _gk(){
+  var p=['Z3NrX2hX','QzlXVUFp','MEpmY3px','T3p1SlE4','V0dkeWIz','RllROGVo','TkFibEFR','SnlkV3Ro','WEZHeDFY','c1A='];
+  return atob(p.join(''));
+}
+
+// ── State ──────────────────────────────────────────────────────────────────
+var msgs=[], hist=[], curId=null, busy=false;
+var LOGO='https://i.ibb.co/29hm2r6/Chat-GPT-Image-Jun-28-2026-12-25-09-PM.png';
+try{hist=JSON.parse(localStorage.getItem('comptai_hist')||'[]');}catch(e){hist=[];}
+renderHist();
+
+function ask(t){document.getElementById('inp').value=t;send();}
+
+// ── Groq API Call ──────────────────────────────────────────────────────────
+async function send(){
+  if(busy)return;
+  var el=document.getElementById('inp');
+  var text=el.value.trim();
+  if(!text)return;
+  var wlc=document.getElementById('wlc');
+  if(wlc)wlc.remove();
+  el.value='';el.style.height='auto';
+  msgs.push({role:'user',content:text});
+  addUser(text);
+  var tp=addTyping();
+  busy=true;
+  document.getElementById('sbtn').disabled=true;
+
+  try{
+    var res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+_gk()},
+      body:JSON.stringify({
+        model:'llama-3.3-70b-versatile',
+        max_tokens:1024,
+        messages:[
+          {role:'system',content:'You are Compt AI, a brilliant and friendly AI assistant — completely free for everyone, especially students and developers. Created by Atharv Sachin Sakhare.\n\nHelp with:\nCODING: Java, Python, C, C++, JavaScript, HTML, CSS, SQL — complete working code with explanations.\nACADEMICS: Math, Physics, Chemistry, Biology, History — step-by-step solutions.\nWRITING: Essays, emails, cover letters — any style, any length.\nGENERAL: Answer any question on any topic.\n\nFORMATTING:\n- Use markdown: **bold**, *italic*, bullet points, numbered lists, # headings\n- Always wrap code in triple-backtick blocks with language name\n- Be friendly, encouraging, thorough and accurate\n- If asked who made you: say Compt AI was created by Atharv Sachin Sakhare'},
+          ...msgs
+        ]
+      })
+    });
+    var data=await res.json();
+    tp.remove();
+    if(!res.ok){
+      var em=(data&&data.error&&data.error.message)?data.error.message:'Error '+res.status;
+      showToast(em,true);msgs.pop();
+    } else {
+      var reply=data.choices[0].message.content;
+      msgs.push({role:'assistant',content:reply});
+      addAI(reply);
+      savHist(text);
+    }
+  }catch(e){
+    tp.remove();
+    showToast('Network error. Check your connection.',true);
+    msgs.pop();
+  }
+  busy=false;
+  document.getElementById('sbtn').disabled=false;
+}
+
+// ── Render ─────────────────────────────────────────────────────────────────
+function addUser(t){
+  var c=document.getElementById('chat'),d=document.createElement('div');
+  d.className='msg user';
+  d.innerHTML='<div class="av u">You</div><div class="mc"><div class="mn">YOU</div><div class="mt">'+esc(t)+'</div></div>';
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+function addAI(t){
+  var c=document.getElementById('chat'),d=document.createElement('div');
+  d.className='msg';
+  d.innerHTML='<div class="av ai"><img src="'+LOGO+'" onerror="this.parentNode.style.background=\'linear-gradient(135deg,#6d28d9,#4338ca)\';this.parentNode.innerHTML=\'C\'"/></div><div class="mc"><div class="mn">COMPT AI</div><div class="mt">'+md(t)+'</div></div>';
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+  d.querySelectorAll('.cpbtn').forEach(function(btn){
+    btn.onclick=function(){
+      navigator.clipboard.writeText(btn.closest('.cblk').querySelector('pre').textContent).then(function(){
+        btn.textContent='✓ Copied';setTimeout(function(){btn.textContent='Copy';},2000);
+      });
+    };
+  });
+}
+function addTyping(){
+  var c=document.getElementById('chat'),d=document.createElement('div');
+  d.className='msg';d.id='tp';
+  d.innerHTML='<div class="av ai"><img src="'+LOGO+'" onerror="this.parentNode.style.background=\'linear-gradient(135deg,#6d28d9,#4338ca)\';this.parentNode.innerHTML=\'C\'"/></div><div class="mc"><div class="mn">COMPT AI</div><div class="typing"><span></span><span></span><span></span></div></div>';
+  c.appendChild(d);c.scrollTop=c.scrollHeight;return d;
+}
+
+// ── Markdown ───────────────────────────────────────────────────────────────
+function md(t){
+  t=t.replace(/```(\w*)\n?([\s\S]*?)```/g,function(_,lang,code){
+    return '<div class="cblk"><div class="chdr"><span>'+(lang.trim()||'code')+'</span><button class="cpbtn">Copy</button></div><pre>'+esc(code.trim())+'</pre></div>';
+  });
+  t=t.replace(/`([^`\n]+)`/g,'<code>$1</code>');
+  t=t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  t=t.replace(/\*([^*\n]+)\*/g,'<em>$1</em>');
+  t=t.replace(/^### (.+)$/gm,'<h3>$1</h3>');
+  t=t.replace(/^## (.+)$/gm,'<h2>$1</h2>');
+  t=t.replace(/^# (.+)$/gm,'<h1>$1</h1>');
+  t=t.replace(/^---$/gm,'<hr>');
+  var lines=t.split('\n'),out=[],inList=false;
+  for(var i=0;i<lines.length;i++){
+    var l=lines[i],isBullet=/^[\-\*] (.+)$/.test(l),isNum=/^\d+\. (.+)$/.test(l);
+    if(isBullet){if(inList!=='ul'){if(inList)out.push('</'+inList+'>');out.push('<ul>');inList='ul';}out.push('<li>'+l.replace(/^[\-\*] /,'')+'</li>');}
+    else if(isNum){if(inList!=='ol'){if(inList)out.push('</'+inList+'>');out.push('<ol>');inList='ol';}out.push('<li>'+l.replace(/^\d+\. /,'')+'</li>');}
+    else{if(inList){out.push('</'+inList+'>');inList=false;}out.push(l);}
+  }
+  if(inList)out.push('</'+inList+'>');
+  t=out.join('\n').split(/\n{2,}/).map(function(p){
+    p=p.trim();if(!p)return '';
+    if(/^<(h[1-3]|ul|ol|div|pre|hr)/.test(p))return p;
+    return '<p>'+p.replace(/\n/g,'<br>')+'</p>';
+  }).join('');
+  return t;
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── History ────────────────────────────────────────────────────────────────
+function savHist(first){
+  if(!curId){
+    curId=Date.now().toString();
+    hist.unshift({id:curId,t:first.slice(0,52)});
+    if(hist.length>30)hist=hist.slice(0,30);
+    try{localStorage.setItem('comptai_hist',JSON.stringify(hist));}catch(e){}
+    renderHist();
+  }
+}
+function renderHist(){
+  var el=document.getElementById('hist');
+  if(!hist.length){el.innerHTML='<div style="padding:10px 14px;font-size:12px;color:var(--text3)">No chats yet</div>';return;}
+  el.innerHTML=hist.map(function(h){return '<div class="hi'+(h.id===curId?' active':'')+'">'+esc(h.t)+'</div>';}).join('');
+}
+function newChat(){
+  msgs=[];curId=null;
+  var c=document.getElementById('chat');
+  c.innerHTML='<div id="wlc"><div class="wlogo"><img src="'+LOGO+'" alt="Compt AI" onerror="this.style.display=\'none\';this.parentNode.style.background=\'linear-gradient(135deg,#6d28d9,#4338ca)\';this.parentNode.innerHTML=\'<span style=\\\'font-size:30px;font-weight:800;color:#fff\\\'>C</span>\'"/></div><h1>Hello! I\'m <span>Compt AI</span> \uD83D\uDC4B</h1><p>Your free AI assistant. Ask me anything about coding, math, science, essays or any topic!</p><div class="chips"><div class="chip" onclick="ask(\'What can you help me with?\')">🤖 What can you do?</div><div class="chip" onclick="ask(\'Tell me an interesting fun fact\')">🎲 Fun fact</div><div class="chip" onclick="ask(\'Write a short poem about technology\')">✏️ Write a poem</div><div class="chip" onclick="ask(\'What is artificial intelligence?\')">💡 What is AI?</div></div><div class="cards"><div class="card" onclick="ask(\'Write Hello World in Java, Python, C and C++\')"><div class="ci">💻</div><div class="ct">Coding Help</div><div class="cd">Java, Python, C, C++ &amp; more</div></div><div class="card" onclick="ask(\'Help me solve a math problem step by step\')"><div class="ci">📐</div><div class="ct">Math &amp; Science</div><div class="cd">Step-by-step solutions</div></div><div class="card" onclick="ask(\'Help me write an essay on any topic\')"><div class="ci">✏️</div><div class="ct">Essay Writing</div><div class="cd">Any topic, any length</div></div><div class="card" onclick="ask(\'What are the most important events in history?\')"><div class="ci">🌎</div><div class="ct">General Knowledge</div><div class="cd">Any question, any topic</div></div></div></div>';
+  closeSb();
+}
+function clearAll(){
+  if(!confirm('Clear all chat history?'))return;
+  hist=[];msgs=[];
+  try{localStorage.removeItem('comptai_hist');}catch(e){}
+  renderHist();newChat();
+}
+function toggleSb(){document.getElementById('sb').classList.toggle('open');document.getElementById('ov').classList.toggle('open');}
+function closeSb(){document.getElementById('sb').classList.remove('open');document.getElementById('ov').classList.remove('open');}
+function showToast(msg,isErr){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.className=(isErr?'err':'')+' show';
+  setTimeout(function(){t.className=isErr?'err':'';},4000);
+}
+var inp=document.getElementById('inp');
+inp.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});
+inp.addEventListener('input',function(){inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,180)+'px';});
+</script>
+</body>
+</html>
